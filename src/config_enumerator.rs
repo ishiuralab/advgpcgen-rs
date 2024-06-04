@@ -38,7 +38,7 @@ impl ConfigEnumerator {
 
     pub fn solve(&self) -> Result<CircuitConfig, &'static str> {
         if *self.shape.iter().max().unwrap_or(&0) > 6 {
-            return Err("Number of input of the GPC must be less than 7.");
+            return Err("Number of input of the GPC must be less than 7 (excluding cin).");
         }
         let groups: Vec<BTreeSet<u32>> = self.shape.iter()
             .map(|&n| vec![0, n].into_iter().collect())

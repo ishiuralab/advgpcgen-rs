@@ -24,7 +24,7 @@ impl GpcEnumerator {
         self.enum_recursively(vec![]);
         println!("max_feasibles");
         for feasible in self.max_feasibles.iter() {
-            println!("{:?}", feasible);
+            println!("{}", feasible.to_json());
         }
         println!("min_infeasibles");
         for infeasible in self.min_infeasibles.iter() {
@@ -70,18 +70,17 @@ impl GpcEnumerator {
                 Ok(sol) => {
                     println!("feasible");
                     self.add_feasible(sol);
-                    for feasible in self.max_feasibles.iter() {
-                        print!("{:?}, ", feasible.shape);
-                    }
-                    println!("");
+                    println!(
+                        "max_feasibles: {:?}",
+                        self.max_feasibles.iter()
+                            .map(|f|&f.shape)
+                            .collect::<Vec<_>>()
+                    );
                 }
                 Err(_err) => {
                     println!("infeasible");
                     self.add_infeasible(target);
-                    for infeasible in self.min_infeasibles.iter() {
-                        print!("{:?}", infeasible);
-                    }
-                    println!("");
+                    println!("min_infeasibles: {:?}", self.min_infeasibles);
                 }
             }
         }else {

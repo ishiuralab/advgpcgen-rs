@@ -108,7 +108,7 @@ impl LutMagic {
                     Ok(gene) => gene,
                     Err(error) => return Err(error),
                 };
-                let init = prop << 32 | gene;
+                let init = prop << (1 << symms.len()) | gene;
                 spec.lut[index] = (symms.clone(), asymm.clone(), Some(init));
             }
         }
