@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Clone, Debug, Ord, PartialOrd, Eq, PartialEq, Serialize, Deserialize)]
 pub struct CircuitConfig {
     pub shape: Vec<u32>,
-    pub lut: Vec<(Vec<u32>, Option<u32>, Option<u64>)>, // vec![(vec![symmetric_input_signals], asymmetric_input_signal, (prop << (1 << symms.len()) | gene))]
+    pub lut: Vec<(Vec<u32>, Option<u32>, Option<u64>)>, // vec![(vec![symmetric_input_signals], asymmetric_input_signal, (prop << 32) | gene))]
     pub cin: Option<u32>,
 }
 
