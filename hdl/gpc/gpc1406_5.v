@@ -1,4 +1,4 @@
-module gpc1407_5(input [5:0] src0, input [3:0] src2, input [0:0] src3, output [4:0] dst);
+module gpc1406_5(input [5:0] src0, input [3:0] src2, input [0:0] src3, output [4:0] dst);
     wire [3:0] gene;
     wire [3:0] prop;
     wire [3:0] out;

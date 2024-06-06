@@ -1,4 +1,4 @@
-module gpc2117_5(input [5:0] src0, input [0:0] src1, input [0:0] src2, input [1:0] src3, output [4:0] dst);
+module gpc2116_5(input [5:0] src0, input [0:0] src1, input [0:0] src2, input [1:0] src3, output [4:0] dst);
     wire [3:0] gene;
     wire [3:0] prop;
     wire [3:0] out;
