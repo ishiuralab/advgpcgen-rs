@@ -1,6 +1,6 @@
-module gpc207_4(input [6:0] src0, input [1:0] src2, output [3:0] dst);
-    wire [2:0] gene;
-    wire [2:0] prop;
+module gpc2207_5(input [6:0] src0, input [1:0] src2, input [1:0] src3, output [4:0] dst);
+    wire [3:0] gene;
+    wire [3:0] prop;
     wire [3:0] out;
     wire [3:0] carryout;
     LUT6_2 #(
@@ -49,13 +49,27 @@ module gpc207_4(input [6:0] src0, input [1:0] src2, output [3:0] dst);
         .I0(src2[0]),
         .I1(src2[1])
     );
+    LUT2 #(
+        .INIT(4'h8)
+    ) lut2_gene3(
+        .O(gene[3]),
+        .I0(src3[0]),
+        .I1(src3[1])
+    );
+    LUT2 #(
+        .INIT(4'h6)
+    ) lut2_prop3(
+        .O(prop[3]),
+        .I0(src3[0]),
+        .I1(src3[1])
+    );
     CARRY4 carry4_inst0(
         .CO(carryout[3:0]),
         .O(out[3:0]),
         .CYINIT(1'h0),
         .CI(src0[0]),
-        .DI({1'h0, gene[2:0]}),
-        .S({1'h0, prop[2:0]})
+        .DI(gene[3:0]),
+        .S(prop[3:0])
     );
-    assign dst = {carryout[2], out[2], out[1], out[0]};
+    assign dst = {carryout[3], out[3], out[2], out[1], out[0]};
 endmodule
