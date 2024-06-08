@@ -1,17 +1,17 @@
-use std::io::{self, Write};
+use std::io::Write;
 
 use crate::circuit_config::CircuitConfig;
 use crate::gpc_solver::{trim_zeros, GpcSolver};
 
 
 #[derive(Clone, Debug)]
-pub struct GpcEnumerator {
+pub struct GpcEnumerator<const SPLIT: bool> {
     max_width: u32,
     max_feasibles: Vec<CircuitConfig>,
     min_infeasibles: Vec<Vec<u32>>,
 }
 
-impl GpcEnumerator {
+impl<const SPLIT: bool> GpcEnumerator<SPLIT> {
     pub fn new(max_width: u32) -> Self {
         Self {
             max_width: max_width,
@@ -34,7 +34,7 @@ impl GpcEnumerator {
 
     fn enum_recursively(&mut self, mut shape: Vec<u32>) {
         if shape.len() >= self.max_width as usize {
-            let mut target: Vec<u32> = shape
+            let target: Vec<u32> = shape
                 .iter()
                 .rev()
                 .cloned()
@@ -42,16 +42,16 @@ impl GpcEnumerator {
             if target[0] == 0 {
                 return;
             }
-            target = trim_zeros(&target).to_vec();
             print!("{:?} ", target);
-            io::stdout().flush().unwrap();
+            std::io::stdout().flush().unwrap();
             let solver = GpcSolver::new(target.clone());
+
             if solver.lutnum > self.max_width {
                 println!("total over");
                 return;
             }
 
-            if solver.splitted.len() > 2 {
+            if SPLIT && solver.splitted.len() > 2 {
                 println!("splittable");
                 return;
             }

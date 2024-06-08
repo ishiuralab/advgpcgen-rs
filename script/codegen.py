@@ -50,10 +50,14 @@ class CodeGenerator:
     def gen_lut_instantiations(self, level=1):
         code = ''
         for place, (symms, asymm, init) in enumerate(self.spec['lut']):
-            if asymm:
-                code += self.gen_lut6_2_instantiation(place, symms, asymm, init, level)
+            if symms:
+                if asymm:
+                    code += self.gen_lut6_2_instantiation(place, symms, asymm, init, level)
+                else:
+                    code += self.gen_symmetric_lut_instantiation(place, symms, init, level)
             else:
-                code += self.gen_symmetric_lut_instantiation(place, symms, init, level)
+                code += self.indent * level + f'assign gene[{place}] = 1\'h0;\n'
+                code += self.indent * level + f'assign prop[{place}] = 1\'h0;\n'
         return code
 
     def gen_symmetric_lut_instantiation(self, place, symms, init, level=1):
