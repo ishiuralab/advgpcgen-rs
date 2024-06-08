@@ -51,7 +51,7 @@ class CodeGenerator:
         code = ''
         for place, (symms, asymm, init) in enumerate(self.spec['lut']):
             if symms:
-                if asymm:
+                if asymm != None:
                     code += self.gen_lut6_2_instantiation(place, symms, asymm, init, level)
                 else:
                     code += self.gen_symmetric_lut_instantiation(place, symms, init, level)
