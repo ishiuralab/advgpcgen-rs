@@ -11,6 +11,7 @@ pub struct GpcSolver {
     pub splitted: Vec<usize>,
 }
 
+#[allow(dead_code)]
 pub fn trim_zeros(vec: &Vec<u32>) -> &[u32] {
     let begin = vec.iter()
         .position(|&x| x != 0)
@@ -21,6 +22,7 @@ pub fn trim_zeros(vec: &Vec<u32>) -> &[u32] {
     &vec[begin..end]
 }
 
+#[allow(dead_code)]
 pub fn trim_upper_zeros(vec: &Vec<u32>) -> &[u32] {
     let end = vec.iter()
         .rposition(|&x| x != 0)
@@ -28,6 +30,7 @@ pub fn trim_upper_zeros(vec: &Vec<u32>) -> &[u32] {
     &vec[0..end]
 }
 
+#[allow(dead_code)]
 impl GpcSolver {
     pub fn new(mut shape: Vec<u32>) -> Self {
         let total: u32 = shape.iter().enumerate().map(|(p, n)|n << p).sum();

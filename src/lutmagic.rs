@@ -29,6 +29,7 @@ pub struct LutMagic {
     inv_cctable: Vec<Vec<u32>>, // dst -> index of (g,p,g,p...)
 }
 
+#[allow(dead_code)]
 impl LutMagic {
     pub fn new(spec: CircuitConfig) -> Self {
         let weights = spec.get_weights();
