@@ -85,7 +85,10 @@ impl LutMagic {
     }
 
     pub fn build(&self) -> Result<CircuitConfig, &'static str> {
-        let table = self.get_candidates_table();
+        let table = match self.get_candidates_table() {
+            Ok(table) => table,
+            Err(error) => return Err(error),
+        };
         let mut spec: CircuitConfig = self.spec.clone();
         for (index, (symms, asymm, _init)) in self.spec.lut.iter().enumerate() {
             if let Some(asymm_index) = asymm {
@@ -131,7 +134,7 @@ impl LutMagic {
         Ok(init)
     }
 
-    fn get_candidates_table(&self) -> Vec<Vec<u32>> {
+    fn get_candidates_table(&self) -> Result<Vec<Vec<u32>>, &'static str> {
         let mut table = (0..(1 << self.srclen))
             .map(|src|self.inv_cctable[(0..self.srclen).map(|i| ((src >> i) & 1) << self.weights[i as usize]).sum::<usize>()].clone())
             .collect();
@@ -139,16 +142,22 @@ impl LutMagic {
             if let Some(asymm_index) = asymm {
                 let mut asymms = symms.clone();
                 asymms.push(*asymm_index);
-                self.apply_constraint_asymm_lut(&mut table, index * 2, index * 2 + 1, &asymms, &symms);
+                if !self.apply_constraint_asymm_lut(&mut table, index * 2, index * 2 + 1, &asymms, &symms) {
+                    return Err("Infeasible configuration");
+                }
             }else {
-                self.apply_constraint_symm_lut(&mut table, index * 2, &symms);
-                self.apply_constraint_symm_lut(&mut table, index * 2 + 1, &symms);
+                if !self.apply_constraint_symm_lut(&mut table, index * 2, &symms) {
+                    return Err("Infeasible configuration");
+                }
+                if !self.apply_constraint_symm_lut(&mut table, index * 2 + 1, &symms) {
+                    return Err("Infeasible configuration");
+                }
             }
         }
-        table
+        Ok(table)
     }
 
-    fn apply_constraint_symm_lut(&self, table: &mut Vec<Vec<u32>>, output: usize, indexes: &Vec<u32>) {
+    fn apply_constraint_symm_lut(&self, table: &mut Vec<Vec<u32>>, output: usize, indexes: &Vec<u32>) -> bool {
         let unused_indexes = self.get_unused_indexes(&indexes);
         let fanin = indexes.len() as u32;
         for used_src in 0..(1 << fanin) {
@@ -161,12 +170,17 @@ impl LutMagic {
                 }
                 availability &= partial_availability;
             }
-            for unused_src in 0..(1 << (self.srclen - fanin)) {
-                let src = self.map_srcbits(&indexes, &unused_indexes, used_src, unused_src);
-                table[src as usize]
-                    .retain(|&cand| (availability & (1 << ((cand >> output) & 1))) != 0);
+            if availability == 0b00 {
+                return false;
+            }else if availability != 0b11 {
+                for unused_src in 0..(1 << (self.srclen - fanin)) {
+                    let src = self.map_srcbits(&indexes, &unused_indexes, used_src, unused_src);
+                    table[src as usize]
+                        .retain(|&cand| (availability & (1 << ((cand >> output) & 1))) != 0);
+                }
             }
         }
+        true
     }
 
     fn get_unused_indexes(&self, indexes: &[u32]) -> Vec<u32> {
@@ -192,15 +206,20 @@ impl LutMagic {
     }
 
     fn apply_constraint_asymm_lut(&self, table: &mut Vec<Vec<u32>>, prop: usize, gene: usize,
-                                  prop_indexes: &Vec<u32>, gene_indexes: &Vec<u32>) {
-        self.apply_constraint_symm_lut(table, prop, &prop_indexes);
-        self.apply_constraint_symm_lut(table, gene, &gene_indexes);
-        let didx = prop_indexes.last().expect("prop_indexes is empty!");
+                                  prop_indexes: &Vec<u32>, gene_indexes: &Vec<u32>) -> bool {
+        if !self.apply_constraint_symm_lut(table, prop, &prop_indexes) {
+            return false;
+        }
+        if !self.apply_constraint_symm_lut(table, gene, &gene_indexes) {
+            return false;
+        }
+        let didx = prop_indexes.last().unwrap();
         for src in 0..(1 << self.srclen) {
             if (src & (1 << didx)) == 0 {
                 table[src]
                     .retain(|&cand| ((cand >> prop) & 1) == ((cand >> gene) & 1));
             }
         }
+        true
     }
 }
