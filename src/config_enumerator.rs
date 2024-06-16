@@ -16,6 +16,7 @@ pub struct ConfigEnumerator {
     place2index: BTreeMap<(u32, u32), u32>,
 }
 
+#[allow(dead_code)]
 impl ConfigEnumerator {
     pub fn new(shape: Vec<u32>) -> Self {
         let total: u32 = shape.iter().enumerate().map(|(p, n)|n << p).sum::<u32>() + 1;

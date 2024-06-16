@@ -11,6 +11,7 @@ pub struct GpcEnumerator<const SPLIT: bool> {
     min_infeasibles: Vec<Vec<u32>>,
 }
 
+#[allow(dead_code)]
 impl<const SPLIT: bool> GpcEnumerator<SPLIT> {
     pub fn new(max_width: u32) -> Self {
         Self {

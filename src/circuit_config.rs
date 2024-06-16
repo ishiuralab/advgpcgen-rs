@@ -7,6 +7,7 @@ pub struct CircuitConfig {
     pub cin: Option<u32>,
 }
 
+#[allow(dead_code)]
 impl CircuitConfig {
     pub fn from_json(json: &String) -> Self {
         serde_json::from_str::<CircuitConfig>(&json).unwrap()
