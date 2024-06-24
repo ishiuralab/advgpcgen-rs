@@ -3,11 +3,11 @@
 `advgpcgen` is a tool that generates Generalized Parallel Counters (GPC) from scratch, which serve as the core of multi-input adders in Xilinx FPGAs.
 
 ## GPC?
-Addition of multiple values is used inalmost all arithmetic operations, starting multiplication and multiply-accumulate operations.
+Addition of multiple values is used in almost all arithmetic operations, starting multiplication and multiply-accumulate operations.
 In ASICs, the method of constructing trees using full adders as the basic elements for multipliers has been known for a long time.
 However, full adders do not fit well with FPGA's LUTs and carry logic, which is not always efficient.
-Therefore, there are proposal for methods using adders expanded to have six inputs and three outputs, or adders where each input has weights other than 1 (2,4,8...) as basic elements.
-Such expanded adders called Generalized Parallel Counters (GPC).
+Therefore, there are proposals for methods using adders expanded to have six inputs and three outputs, or adders where each input has weights other than 1 (2,4,8...) as basic elements.
+Such expanded adders called Generalized Parallel Counters (GPC), and the adder tree using GPCs are called Compressor Tree.
 
 GPC is represented as follow:
 $p_k$ denotes the numbers of inputs at the $k^{th}$ position, and $q$ represents the number of output bits.
