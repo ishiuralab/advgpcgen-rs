@@ -1,6 +1,33 @@
 # ADVGPCGEN: ADVanced Generalized Parallel Counter GENerator
 
-`advgpcgen` is an open-source tool designed to generate Generalized Parallel Counters (GPC) from scratch, specifically optimized for implementation on Xilinx FPGAs. 
+`advgpcgen` is a tool that generates Generalized Parallel Counters (GPC) from scratch, which serve as the core of multi-input adders in Xilinx FPGAs.
+
+## GPC?
+Addition of multiple values is used inalmost all arithmetic operations, starting multiplication and multiply-accumulate operations.
+In ASICs, the method of constructing trees using full adders as the basic elements for multipliers has been known for a long time.
+However, full adders do not fit well with FPGA's LUTs and carry logic, which is not always efficient.
+Therefore, there are proposal for methods using adders expanded to have six inputs and three outputs, or adders where each input has weights other than 1 (2,4,8...) as basic elements.
+Such expanded adders called Generalized Parallel Counters (GPC).
+
+GPC is represented as follow:
+$p_k$ denotes the numbers of inputs at the $k^{th}$ position, and $q$ represents the number of output bits.
+
+$
+(p_{q-2}, p_{q-3},...,p_0; q)
+$
+
+For example, a full adder is represented as $(3;2)$. 
+$(1,3,5;5)$ represents a GPC that takes 5 inputs at the 1's place, 3 inputs at the 2's place, and 1 input at the 4's place, and returns the sum as a 4-bit output.
+
+So far, three types of GPCs know to be implementable in a single slice are $(1,1,7;4)$, $(1,3,5;4)$, and $(1,3,2,5;5)$.
+By reducing their inputs and outputs or combining them, approximately 20 types of GPCs have been developed.
+
+## Newly Discovored GPCs
+In this project, five new GPCs that implementable in single slice have been discovered: $(1,2,6;4)$, $(4,2,5;5)$, $(1,2,4,4;5)$, $(1,3,1,6;5)$, and $(1,3,3,4;5)$.
+
+## HDL Implementations
+The Verilog HDL implementations of the GPCs are located in the `hdl` branch.
+They require LUT1~5, LUT6_2, and CARRY4 modules.
 
 ## Build
 ```shellsession
@@ -78,5 +105,4 @@ $
 - Mugi Noda
 
 ## License
-- Rust and Python: GPLv3
-- Verilog HDL and JSON (generated sources): MIT
+- GPLv3
