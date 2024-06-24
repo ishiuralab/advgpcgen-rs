@@ -12,9 +12,9 @@ Such expanded adders called Generalized Parallel Counters (GPC).
 GPC is represented as follow:
 $p_k$ denotes the numbers of inputs at the $k^{th}$ position, and $q$ represents the number of output bits.
 
-$
+$`
 (p_{q-2}, p_{q-3},...,p_0; q)
-$
+`$
 
 For example, a full adder is represented as $(3;2)$. 
 $(1,3,5;5)$ represents a GPC that takes 5 inputs at the 1's place, 3 inputs at the 2's place, and 1 input at the 4's place, and returns the sum as a 4-bit output.
