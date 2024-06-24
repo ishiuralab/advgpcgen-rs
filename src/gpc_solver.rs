@@ -7,7 +7,6 @@ use crate::config_enumerator::ConfigEnumerator;
 pub struct GpcSolver {
     pub shape: Vec<u32>,
     pub lutnum: u32,
-    pub shifted: Vec<u32>,
     pub splitted: Vec<usize>,
 }
 
@@ -56,7 +55,6 @@ impl GpcSolver {
         Self {
             shape: shape,
             lutnum: lutnum,
-            shifted: shifted,
             splitted: splitted,
         }
     }
