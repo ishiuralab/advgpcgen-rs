@@ -17,7 +17,7 @@ $`
 `$
 
 For example, a full adder is represented as $(3;2)$. 
-$(1,3,5;5)$ represents a GPC that takes 5 inputs at the 1's place, 3 inputs at the 2's place, and 1 input at the 4's place, and returns the sum as a 4-bit output.
+$(1,3,5;4)$ represents a GPC that takes 5 inputs at the 1's place, 3 inputs at the 2's place, and 1 input at the 4's place, and returns the sum as a 4-bit output.
 
 So far, three types of GPCs know to be implementable in a single slice are $(1,1,7;4)$, $(1,3,5;4)$, and $(1,3,2,5;5)$.
 By reducing their inputs and outputs or combining them, approximately 20 types of GPCs have been developed.
