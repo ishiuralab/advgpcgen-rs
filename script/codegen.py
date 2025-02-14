@@ -221,6 +221,8 @@ if __name__ == '__main__':
     with open(sys.argv[1], 'r') as f:
         spec = json.loads(f.read())
     codegen = CodeGenerator(spec)
-    print(codegen.gen_module())
+    with open(f'hdl/gpc/{codegen.get_module_name()}.v', 'w') as f:
+        print(codegen.gen_module(), file=f)
     testgen = TestGenerator(spec)
-    print(testgen.gen_module())
+    with open(f'hdl/test/{codegen.get_module_name()}_test.v', 'w') as f:
+        print(testgen.gen_module(), file=f)
