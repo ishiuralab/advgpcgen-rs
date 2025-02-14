@@ -26,7 +26,7 @@ By reducing their inputs and outputs or combining them, approximately 20 types o
 In this project, five new GPCs that implementable in single slice have been discovered: $(1,2,6;4)$, $(4,2,5;5)$, $(1,2,4,4;5)$, $(1,3,1,6;5)$, and $(1,3,3,4;5)$.
 
 ## HDL Implementations
-The Verilog HDL implementations of the GPCs are located in the `hdl` branch.
+The Verilog HDL implementations of the GPCs are located in the `hdl` directory.
 They require LUT1~5, LUT6_2, and CARRY4 modules.
 
 ## Build
