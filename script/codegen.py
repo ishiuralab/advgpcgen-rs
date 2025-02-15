@@ -9,9 +9,14 @@ class InvalidCircuitError(RuntimeError):
 
 
 class CodeGenerator:
-    def __init__(self, spec):
+    def __init__(self, spec, avoidlsb7=False):
+        self.lsb7 = avoidlsb7 and spec['shape'][0] == 7
         self.spec = spec
         self.width = sum(num << place for place, num in enumerate(self.spec['shape'])).bit_length()
+        if self.lsb7:
+            self.spec['cin'] = None
+            self.spec['lut'] = [[[0], None, 2]] + self.spec['lut']
+            self.width += 1
         self.carry4cnt = (self.width + 2) // 4
         self.idx2wire = []
         for place, num in enumerate(self.spec['shape']):
@@ -19,25 +24,34 @@ class CodeGenerator:
                 self.idx2wire += [(place, idx)]
         self.indent = '    '
 
-    def gen_module(self):
+    def gen_module(self, name=None):
         code = ''
-        code += f'module {self.get_module_name()}({self.get_module_arguments()});\n'
+        if name:
+            code += f'module {name}({self.get_module_arguments()});\n'
+        else:
+            code += f'module {self.get_module_name()}({self.get_module_arguments()});\n'
         code += self.gen_wire_declarations()
         code += self.gen_lut_instantiations()
         code += self.gen_carrychain_instantiation()
         code += self.gen_dst_assignment()
-        code += f'endmodule'
+        code += f'endmodule\n'
         return code
 
     def get_module_arguments(self):
         args = [f'input [{num - 1}:0] src{place}' for place, num in enumerate(self.spec['shape']) if num != 0]
-        args += [f'output [{self.width - 1}:0] dst']
+        if self.lsb7:
+            args += [f'output [{self.width - 2}:0] dst']
+        else:
+            args += [f'output [{self.width - 1}:0] dst']
         return ', '.join(args)
 
     def get_module_name(self):
         shape = self.spec['shape']
         stripped = shape[: next((len(shape) - i for i, x in enumerate(shape[::-1]) if x != 0), len(shape))]
-        return f'gpc{"".join((f"{c}" for c in stripped[::-1]))}_{self.width}'
+        if self.lsb7:
+            return f'gpc{"".join((f"{c}" for c in stripped[::-1]))}_{self.width - 1}'
+        else:
+            return f'gpc{"".join((f"{c}" for c in stripped[::-1]))}_{self.width}'
 
     def gen_wire_declarations(self, level=1):
         code = ''
@@ -134,8 +148,12 @@ class CodeGenerator:
 
     def gen_dst_assignment(self, level=1):
         terms = [f'carryout[{self.width - 2}]']
-        for place in range(self.width - 1)[::-1]:
-            terms += [f'out[{place}]']
+        if self.lsb7:
+            for place in range(1, self.width - 1)[::-1]:
+                terms += [f'out[{place}]']
+        else:
+            for place in range(self.width - 1)[::-1]:
+                terms += [f'out[{place}]']
         return self.indent * level + f'assign dst = {{{", ".join(terms)}}};\n'
 
 
@@ -220,9 +238,5 @@ class TestGenerator(CodeGenerator):
 if __name__ == '__main__':
     with open(sys.argv[1], 'r') as f:
         spec = json.loads(f.read())
-    codegen = CodeGenerator(spec)
-    with open(f'hdl/gpc/{codegen.get_module_name()}.v', 'w') as f:
-        print(codegen.gen_module(), file=f)
-    testgen = TestGenerator(spec)
-    with open(f'hdl/test/{codegen.get_module_name()}_test.v', 'w') as f:
-        print(testgen.gen_module(), file=f)
+    codegen = CodeGenerator(spec, avoidlsb7=True)
+    print(codegen.gen_module())
