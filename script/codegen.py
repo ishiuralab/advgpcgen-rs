@@ -236,7 +236,18 @@ class TestGenerator(CodeGenerator):
 
 
 if __name__ == '__main__':
-    with open(sys.argv[1], 'r') as f:
+    from argparse import ArgumentParser
+    parser = ArgumentParser()
+    parser.add_argument('source', type=str, help='A JSON file name of GPC specification.')
+    parser.add_argument('--test', '-t', action='store_true',
+                        help='When this option represented, it generates a testbench for the represented JSON of GPC.')
+    parser.add_argument('--avoidlsb7', '-a', action='store_true',
+                        help='When this option represented in the GPC generation mode (not in the testbench generation mode), GPC that have 7 inputs at the least significant place and outputs of 4 digits or less, avoid using LUTA to deal the lsb bits.')
+    args = parser.parse_args()
+    with open(args.source, 'r') as f:
         spec = json.loads(f.read())
-    codegen = CodeGenerator(spec, avoidlsb7=True)
-    print(codegen.gen_module())
+    if not args.test:
+        gen = CodeGenerator(spec, len(spec['lut']) < 4 and args.avoidlsb7)
+    else:
+        gen = TestGenerator(spec)
+    print(gen.gen_module())
