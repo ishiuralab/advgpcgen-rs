@@ -6,7 +6,7 @@
 Addition of multiple values is used in almost all arithmetic operations, such as multiplication and multiply-accumulate operatoins.
 In ASICs, the method of constructing trees using full adders as the basic elements for multipliers has been known since 1960s.
 However, full adders do not fit in FPGA's LUTs and carry logic, which is not always efficient.
-Therefore, methods using adders expanded to have more inputs and outputs (parallel counter), or adders where each input has weights other than 1 (2,4,8,...) as basic elements has been proposed.
+Therefore, methods using adders expanded to have more inputs and outputs (parallel counter), or adders where each input has weights other than 1 (2,4,8,...) as basic elements have been proposed.
 Such expanded adders called generalized parallel counters (GPC), and the adder tree using GPCs are called compressor tree.
 
 GPC is represented as follow:
