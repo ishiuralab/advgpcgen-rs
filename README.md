@@ -115,6 +115,41 @@ $ ./gpc1334 | grep 'test:0'
 $ # PASS
 ```
 
+## GPC Description (JSON)
+```javascript
+{
+    "shape":[4,3,3,1],
+    "lut":[
+        [[1,2,3],null,644245094496],
+        [[1,2,4,5,6],null,8685059358021126272],
+        [[4,5,6,8,9],7,1722882046844934120],
+        [[4,5,6,8,9],10,6500312741898240]
+    ],
+    "cin":0
+}
+```
+
+### shape
+- The `shape` filed represents number of inputs of each digits.
+- A GPC represented as the JSON in above has 4 input bits in least significant place.
+
+### lut
+- The `lut` filed represents connection patterns from input bits to each LUT ports and values of LUT truth tables.
+- This field consists of list of LUTs informations.
+- Each LUT information consists of a tuple of 3 values.
+  - Symmetric ports (I0 ~ I4) input wire indices.
+  - Asymmetric ports (I5) input wire index.
+    - If this field is `null`, I5 port is not used and set to 0.
+  - Values of each truth table memories.
+    - The upper 32 bits represent `propagate` side.
+    - The lower 32 bits represent `generate` side.
+
+### cin
+- The `cin` field represents wire index provided to the CIN (CYINIT) of CARRY4.
+- If this field is `null`, CIN will not used and set to 0.
+
+
+
 ## Author
 - Mugi Noda
 
